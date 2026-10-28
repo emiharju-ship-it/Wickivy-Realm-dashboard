@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Table Staff Directory & Directive Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        continental: {
+                            black: '#08080a',
+                            dark: '#0f1015',
+                            card: '#151720',
+                            border: '#2a2d3d',
+                            gold: '#d4af37',
+                            goldHover: '#f3cf55',
+                            emerald: '#10b981',
+                            crimson: '#dc2626',
+                            purple: '#8b5cf6',
+                            blue: '#3b82f6',
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 20px rgba(212, 175, 55, 0.25)',
+                        'crimson-glow': '0 0 20px rgba(220, 38, 38, 0.35)',
+                        'emerald-glow': '0 0 20px rgba(16, 185, 129, 0.25)',
+                        'blue-glow': '0 0 20px rgba(59, 130, 246, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #08080a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 90% 80%, rgba(220, 38, 38, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(21, 23, 32, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.15);
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .animate-ticker {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+        }
+        .animate-ticker:hover {
+            animation-play-state: paused;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff2a3 0%, #d4af37 50%, #aa820a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1015; }
+        ::-webkit-scrollbar-thumb { background: #2a2d3d; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+    </style>
+</head>
+
+<div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<body class="min-h-screen flex flex-col text-slate-200">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-continental-border/80 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-continental-gold via-yellow-600 to-amber-900 flex items-center justify-center shadow-gold-glow">
+                    <i class="fa-solid fa-coins text-continental-black text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-cinzel text-xl md:text-2xl font-bold tracking-wider gold-gradient-text">HIGH TABLE</h1>
+                    <p class="text-xs text-slate-400 tracking-widest uppercase">Staff Directory & Directive Dashboard</p>
+                </div>
+            </div>
+
+            <!-- Excommunicado Ticker -->
+            <div class="hidden lg:flex items-center gap-3 bg-continental-dark/80 px-3 py-1.5 rounded-full border border-continental-crimson/30 max-w-md overflow-hidden relative">
+                <span class="flex h-2 w-2 relative shrink-0">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-continental-crimson opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-continental-crimson"></span>
+                </span>
+                <div class="text-xs text-slate-300 font-mono overflow-hidden whitespace-nowrap">
+                    <div class="animate-ticker">
+                        <span class="mr-6 text-continental-crimson font-bold"><i class="fa-solid fa-biohazard mr-1"></i> EXCOMMUNICADO: BabaYaga Active (40 Coins/Emeralds)</span>
+                        <span class="mr-6 text-continental-gold"><i class="fa-solid fa-shield-halved mr-1"></i> Sanctuary Radius Active at Town Hall</span>
+                        <span class="mr-6 text-emerald-400"><i class="fa-solid fa-store mr-1"></i> Trader Camp: Strictly 1 Player Zone</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 w-full md:w-auto justify-end">
+                <button onclick="openApplyModal()" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-continental-gold/10 hover:bg-continental-gold/20 text-continental-gold border border-continental-gold/40 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Apply For Role</span>
+                </button>
+                <button onclick="exportData()" title="Export JSON" class="p-2 text-xs rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 border border-continental-border">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+                <button onclick="document.getElementById('importFileInput').click()" title="Import JSON" class="p-2 text-xs rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 border border-continental-border">
+                    <i class="fa-solid fa-upload"></i>
+                </button>
+                <input type="file" id="importFileInput" class="hidden" accept=".json" onchange="importData(event)">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+
+        <!-- Top Widgets Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            
+            <!-- Target Sanction Card -->
+            <div class="glass-panel rounded-xl p-5 border-l-4 border-l-continental-crimson flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10 text-continental-crimson text-8xl pointer-events-none">
+                    <i class="fa-solid fa-skull"></i>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-continental-crimson bg-continental-crimson/10 px-2 py-0.5 rounded border border-continental-crimson/30">
+                            <i class="fa-solid fa-biohazard mr-1"></i> EXCOMMUNICADO
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">1 IRL DAY</span>
+                    </div>
+                    <h3 class="font-cinzel text-lg font-bold text-slate-100 mb-1">TARGET: BABAYAGA</h3>
+                    <p class="text-xs text-slate-400 mb-3">Grievance: Violating Continental Sanctuary Laws / Major Rule Infraction.</p>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-continental-border/50">
+                    <div class="text-xs text-slate-300">
+                        Bounty: <span class="text-continental-gold font-bold font-mono text-sm">40 Coins / Emeralds</span>
+                    </div>
+                    <button onclick="copyExcommunicadoBroadcast()" class="text-xs text-continental-crimson hover:text-red-400 font-medium underline flex items-center gap-1">
+                        <i class="fa-solid fa-copy"></i> Copy Broadcast
+                    </button>
+                </div>
+            </div>
+
+            <!-- Laws Card -->
+            <div class="glass-panel rounded-xl p-5 border-l-4 border-l-continental-gold flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10 text-continental-gold text-8xl pointer-events-none">
+                    <i class="fa-solid fa-gavel"></i>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-continental-gold bg-continental-gold/10 px-2 py-0.5 rounded border border-continental-gold/30">
+                            <i class="fa-solid fa-book-bookmark mr-1"></i> High Table Directives
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">SANCTUARY LAWS</span>
+                    </div>
+                    <h3 class="font-cinzel text-lg font-bold text-slate-100 mb-1">CONTINENTAL LAWS</h3>
+                    <p class="text-xs text-slate-400 mb-2">Hostile on sight outside safe zones. Screenshot/clip required for bounty payouts.</p>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-continental-border/50">
+                    <span class="text-xs text-slate-400"><i class="fa-solid fa-shield-cat text-emerald-400 mr-1"></i> Civilian Protection Active</span>
+                    <button onclick="openRulesModal()" class="text-xs text-continental-gold hover:text-yellow-300 font-medium underline flex items-center gap-1">
+                        <i class="fa-solid fa-list-check"></i> View All Rules
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metrics Card -->
+            <div class="glass-panel rounded-xl p-5 border-l-4 border-l-continental-emerald flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-continental-emerald bg-continental-emerald/10 px-2 py-0.5 rounded border border-continental-emerald/30">
+                            <i class="fa-solid fa-users-gear mr-1"></i> Roster Metrics
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">HIGH TABLE</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="bg-continental-dark/80 p-2.5 rounded-lg border border-continental-border/50">
+                            <span class="text-xs text-slate-400 block">Assigned Roles</span>
+                            <span id="statAssignedCount" class="text-xl font-bold font-mono text-continental-emerald">4</span>
+                        </div>
+                        <div class="bg-continental-dark/80 p-2.5 rounded-lg border border-continental-border/50">
+                            <span class="text-xs text-slate-400 block">Vacant Positions</span>
+                            <span id="statVacantCount" class="text-xl font-bold font-mono text-amber-400">16</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-continental-border/50 flex items-center justify-between text-xs text-slate-400">
+                    <span>Currency Standard: <strong class="text-continental-gold">1 Gold = 1 Coin</strong></span>
+                    <span id="statTotalRoles" class="font-mono">Total Roles: 20</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 glass-panel p-4 rounded-xl">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
+                <button id="tabBtnRoster" onclick="switchTab('roster')" class="px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-lg bg-continental-gold text-continental-black shadow-gold-glow transition-all flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-id-card"></i> Staff Directory
+                </button>
+                <button id="tabBtnHierarchy" onclick="switchTab('hierarchy')" class="px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 border border-continental-border transition-all flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-sitemap"></i> Hierarchy Tree
+                </button>
+            </div>
+
+            <div id="rosterSearchControls" class="flex flex-col sm:flex-row items-center gap-3">
+                <div class="relative w-full sm:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="filterStaff()" placeholder="Search IGN, Discord, or Role..." class="w-full bg-continental-dark/90 border border-continental-border rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-continental-gold">
+                </div>
+
+                <select id="departmentFilter" onchange="filterStaff()" class="w-full sm:w-auto bg-continental-dark/90 border border-continental-border rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-continental-gold">
+                    <option value="ALL">All Departments</option>
+                    <option value="LEADERSHIP">High Table Leadership</option>
+                    <option value="SUPPORT">Safe Zone & Support</option>
+                    <option value="TRADES">Trades & Crafts</option>
+                    <option value="UNDERWORLD">Underworld & Targets</option>
+                </select>
+
+                <select id="statusFilter" onchange="filterStaff()" class="w-full sm:w-auto bg-continental-dark/90 border border-continental-border rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-continental-gold">
+                    <option value="ALL">All Statuses</option>
+                    <option value="ASSIGNED">Assigned (4)</option>
+                    <option value="VACANT">Vacant (16)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Directory Roster Cards View -->
+        <div id="tabContentRoster" class="space-y-6">
+            <div id="staffCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+            
+            <div id="noResultsPlaceholder" class="hidden text-center py-16 glass-panel rounded-xl">
+                <i class="fa-solid fa-user-slash text-5xl text-slate-600 mb-3"></i>
+                <h3 class="text-lg font-bold font-cinzel text-slate-300">No Roles Match Your Query</h3>
+                <p class="text-xs text-slate-500 mt-1">Try resetting your filters or search keywords.</p>
+            </div>
+        </div>
+
+        <!-- Hierarchy Tree View -->
+        <div id="tabContentHierarchy" class="hidden glass-panel rounded-xl p-6 sm:p-8 space-y-8 overflow-x-auto">
+            <div class="text-center max-w-xl mx-auto mb-6">
+                <h2 class="font-cinzel text-2xl font-bold gold-gradient-text">HIGH TABLE COMMAND STRUCTURE</h2>
+                <p class="text-xs text-slate-400 mt-1">Operational hierarchy across Leadership, Support, Trades, and Underworld.</p>
+            </div>
+
+            <div class="min-w-[700px] flex flex-col items-center gap-8 py-4">
+                <div class="flex flex-col items-center">
+                    <div class="text-xs font-bold text-continental-gold tracking-widest uppercase mb-3"><i class="fa-solid fa-crown mr-1"></i> Tier I: Leadership</div>
+                    <div id="hierarchyTier1" class="flex flex-wrap justify-center gap-4"></div>
+                </div>
+                <div class="w-0.5 h-8 bg-gradient-to-b from-continental-gold to-continental-purple"></div>
+
+                <div class="flex flex-col items-center">
+                    <div class="text-xs font-bold text-continental-purple tracking-widest uppercase mb-3"><i class="fa-solid fa-building-shield mr-1"></i> Tier II: Sanctuary & Administration</div>
+                    <div id="hierarchyTier2" class="flex flex-wrap justify-center gap-4"></div>
+                </div>
+                <div class="w-0.5 h-8 bg-gradient-to-b from-continental-purple to-continental-emerald"></div>
+
+                <div class="flex flex-col items-center">
+                    <div class="text-xs font-bold text-continental-emerald tracking-widest uppercase mb-3"><i class="fa-solid fa-hammer mr-1"></i> Tier III: Trades & Crafts</div>
+                    <div id="hierarchyTier3" class="flex flex-wrap justify-center gap-4"></div>
+                </div>
+                <div class="w-0.5 h-8 bg-gradient-to-b from-continental-emerald to-continental-crimson"></div>
+
+                <div class="flex flex-col items-center">
+                    <div class="text-xs font-bold text-continental-crimson tracking-widest uppercase mb-3"><i class="fa-solid fa-skull-crossbones mr-1"></i> Tier IV: Underworld & Field Targets</div>
+                    <div id="hierarchyTier4" class="flex flex-wrap justify-center gap-4"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto glass-panel border-t border-continental-border/80 py-4 px-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>&copy; Continental High Table Directives. All Rights Reserved.</span>
+            <span class="text-slate-400 font-mono">System Time: <span id="systemClock">--:--:--</span></span>
+        </div>
+    </footer>
+
+    <!-- Role Detail / Edit Modal -->
+    <div id="roleModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-xl rounded-2xl border border-continental-gold/30 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 bg-continental-dark/90 border-b border-continental-border flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="modalRoleIconBg" class="w-10 h-10 rounded-lg bg-continental-gold/10 text-continental-gold flex items-center justify-center border border-continental-gold/30">
+                        <i id="modalRoleIcon" class="fa-solid fa-user-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalRoleTitle" class="font-cinzel text-lg font-bold text-slate-100">Role Title</h3>
+                        <span id="modalDepartmentBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-continental-gold/10 text-continental-gold border border-continental-gold/30">LEADERSHIP</span>
+                    </div>
+                </div>
+                <button onclick="closeRoleModal()" class="text-slate-400 hover:text-slate-200 text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5 overflow-y-auto font-sans text-xs text-slate-300">
+                <div class="bg-continental-dark/80 p-4 rounded-xl border border-continental-border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Assigned Operative</span>
+                        <span id="modalStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold">Assigned</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-400 mb-1 font-mono">Assigned Name / IGN</label>
+                            <input type="text" id="modalInputAssignee" placeholder="e.g. Angela or Vacant" class="w-full bg-continental-card border border-continental-border rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-continental-gold">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1 font-mono">Discord Tag</label>
+                            <input type="text" id="modalInputDiscord" placeholder="e.g. ttvemh4r" class="w-full bg-continental-card border border-continental-border rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-continental-gold">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-continental-dark/50 p-3 rounded-lg border border-continental-border/60">
+                        <span class="text-slate-400 font-mono block mb-1">Assigned Realm Location</span>
+                        <div id="modalLocationText" class="font-semibold text-slate-200">Town Hall</div>
+                    </div>
+                    <div class="bg-continental-dark/50 p-3 rounded-lg border border-continental-border/60">
+                        <span class="text-slate-400 font-mono block mb-1">Clearance Level</span>
+                        <div id="modalClearanceText" class="font-semibold text-continental-gold">Level 5 (High Table)</div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-slate-300 font-bold block mb-2 uppercase tracking-wider text-[11px]"><i class="fa-solid fa-list-check text-continental-gold mr-1"></i> Mandates & Duties</span>
+                    <ul id="modalDutiesList" class="space-y-1.5 text-slate-400 list-disc list-inside bg-continental-dark/40 p-3 rounded-lg border border-continental-border/40"></ul>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-continental-dark/90 border-t border-continental-border flex items-center justify-between">
+                <button onclick="toggleRoleVacant()" id="modalToggleVacantBtn" class="px-3 py-1.5 rounded-lg bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/50 text-xs font-semibold">
+                    Mark as Vacant
+                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeRoleModal()" class="px-4 py-1.5 rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 text-xs font-semibold">Cancel</button>
+                    <button onclick="saveRoleChanges()" class="px-4 py-1.5 rounded-lg bg-continental-gold hover:bg-continental-goldHover text-continental-black text-xs font-bold shadow-gold-glow">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Generator Modal -->
+    <div id="applyModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl border border-continental-gold/30 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 bg-continental-dark/90 border-b border-continental-border flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-continental-gold/10 text-continental-gold flex items-center justify-center border border-continental-gold/30">
+                        <i class="fa-solid fa-file-pen text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-cinzel text-lg font-bold text-slate-100">HIGH TABLE STAFF APPLICATION</h3>
+                        <p class="text-xs text-slate-400">Apply for vacant positions within the Continental Realm</p>
+                    </div>
+                </div>
+                <button onclick="closeApplyModal()" class="text-slate-400 hover:text-slate-200 text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="staffAppForm" onsubmit="handleApplySubmit(event)" class="p-6 space-y-4 overflow-y-auto text-xs text-slate-300">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-400 mb-1 font-mono">In-Game Name (IGN) *</label>
+                        <input type="text" required id="appIGN" placeholder="e.g. JohnWick" class="w-full bg-continental-dark border border-continental-border rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-continental-gold">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1 font-mono">Discord Tag *</label>
+                        <input type="text" required id="appDiscord" placeholder="e.g. ttvemh4r" class="w-full bg-continental-dark border border-continental-border rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-continental-gold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-400 mb-1 font-mono">Position Applying For *</label>
+                        <select required id="appRoleSelect" class="w-full bg-continental-dark border border-continental-border rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-continental-gold"></select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1 font-mono">Timezone / Active Hours</label>
+                        <input type="text" id="appTimezone" placeholder="e.g. EST (20 hrs/week)" class="w-full bg-continental-dark border border-continental-border rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-continental-gold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 mb-1 font-mono">Relevant Experience</label>
+                    <textarea id="appExperience" rows="3" placeholder="Detail prior moderation or trade experience..." class="w-full bg-continental-dark border border-continental-border rounded-lg p-3 text-slate-200 focus:outline-none focus:border-continental-gold"></textarea>
+                </div>
+
+                <div class="p-3 bg-continental-gold/10 border border-continental-gold/30 rounded-lg text-slate-300 flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-continental-gold text-sm mt-0.5"></i>
+                    <span>Generates a formatted High Table application string to copy into your Discord ticket!</span>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeApplyModal()" class="px-4 py-2 rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-continental-gold hover:bg-continental-goldHover text-continental-black font-bold">Generate Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rulesModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-xl rounded-2xl border border-continental-gold/30 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 bg-continental-dark/90 border-b border-continental-border flex items-center justify-between">
+                <h3 class="font-cinzel text-lg font-bold text-slate-100"><i class="fa-solid fa-gavel text-continental-gold mr-2"></i>CONTINENTAL LAWS</h3>
+                <button onclick="closeRulesModal()" class="text-slate-400 hover:text-slate-200 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4 overflow-y-auto text-xs text-slate-300">
+                <div class="p-3 bg-continental-dark/60 rounded-lg border border-continental-border">
+                    <h4 class="font-bold text-continental-gold mb-1">Rule 1: Excommunicado</h4>
+                    <p class="text-slate-400">Players declared Excommunicado forfeit all protections. Any assassin may engage them anywhere except Concierge designated safe zones.</p>
+                </div>
+                <div class="p-3 bg-continental-dark/60 rounded-lg border border-continental-border">
+                    <h4 class="font-bold text-continental-gold mb-1">Rule 2: Temporary Sanctuary</h4>
+                    <p class="text-slate-400">Remaining within protection radius of the Continental (Town Hall) grants absolute sanctuary. Leaving radius declares re-entry into combat field.</p>
+                </div>
+                <div class="p-3 bg-continental-dark/60 rounded-lg border border-continental-border">
+                    <h4 class="font-bold text-continental-gold mb-1">Rule 3: Bounty Claims</h4>
+                    <p class="text-slate-400">Must post screenshot/clip of death message to Admin ticket proving elimination. Lack of proof forfeits coin payout.</p>
+                </div>
+                <div class="p-3 bg-continental-dark/60 rounded-lg border border-continental-border">
+                    <h4 class="font-bold text-continental-gold mb-1">Rule 4: Civilian Protection</h4>
+                    <p class="text-slate-400">Assassins may only engage willing combatants/targets. Killing a civilian results in immediate Excommunicado.</p>
+                </div>
+            </div>
+            <div class="px-6 py-3 bg-continental-dark/90 border-t border-continental-border text-right">
+                <button onclick="closeRulesModal()" class="px-4 py-1.5 rounded-lg bg-continental-gold text-continental-black text-xs font-bold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Data Logic -->
+    <script>
+        const defaultStaffRoles = [
+            // --- TAKEN (ASSIGNED) ROLES FIRST ---
+            { id: '1', title: 'Leader ship, manager & high table', department: 'LEADERSHIP', tier: 1, assignee: 'Angela', discord: 'ttvemh4r', status: 'ASSIGNED', location: 'Town hall', clearance: 'Level 5 (High Authority)', color: 'gold', icon: 'fa-crown', duties: ['Server-wide governance', 'High Table decrees', 'Final arbitration'] },
+            { id: '2', title: 'Concierge', department: 'SUPPORT', tier: 2, assignee: 'Layla', discord: 'rc9stayevil', status: 'ASSIGNED', location: 'Continental Front Desk', clearance: 'Level 3 (Sanctuary Keeper)', color: 'purple', icon: 'fa-bell-concierge', duties: ['Welcoming citizens', 'Room rentals & safe zone access', 'Coin stipends'] },
+            { id: '3', title: 'The Baba Yaga', department: 'UNDERWORLD', tier: 4, assignee: 'Cole', discord: 'ezysn', status: 'ASSIGNED', location: 'Realm Wilderness', clearance: 'Level HVT (EXCOMMUNICADO Target)', color: 'blue', icon: 'fa-skull-crossbones', duties: ['Active Excommunicado target', '40 Coins/Emeralds active bounty'] },
+            { id: '4', title: 'Hell Warden', department: 'UNDERWORLD', tier: 4, assignee: 'Rio', discord: 'the_real_rio_76418', status: 'ASSIGNED', location: 'Nether Compound', clearance: 'Level 4 (Underworld Control)', color: 'red', icon: 'fa-fire-burner', duties: ['Nether sector oversight', 'Underworld combat governance'] },
+
+            // --- VACANT ROLES FOLLOW ---
+            { id: '5', title: 'Safe Zone Guard', department: 'SUPPORT', tier: 2, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Town Hall Perimeter', clearance: 'Level 2', color: 'purple', icon: 'fa-user-shield', duties: ['Enforcing zero-combat safe zone'] },
+            { id: '6', title: 'High Assassin', department: 'SUPPORT', tier: 2, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Shadow Sector', clearance: 'Level 3 (Enforcement)', color: 'purple', icon: 'fa-user-ninja', duties: ['High-value bounty execution', 'Sanctuary boundary patrol'] },
+            { id: '7', title: 'Shop Keeper', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Central Bazaar', clearance: 'Level 1', color: 'green', icon: 'fa-shop', duties: ['General trade management'] },
+            { id: '8', title: 'Bar Keeper', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Tavern', clearance: 'Level 1', color: 'green', icon: 'fa-beer-mug-empty', duties: ['Tavern management'] },
+            { id: '9', title: 'Cafe Keeper', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Town Square Cafe', clearance: 'Level 1', color: 'green', icon: 'fa-mug-hot', duties: ['Food & beverage distribution'] },
+            { id: '10', title: 'Blacksmith', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Forge', clearance: 'Level 1', color: 'green', icon: 'fa-anvil', duties: ['Weapon & armor repair'] },
+            { id: '11', title: 'Librarian', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Archive Library', clearance: 'Level 1', color: 'green', icon: 'fa-book', duties: ['Enchantment trades & lore records'] },
+            { id: '12', title: 'Master Builder', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Realm Architecture', clearance: 'Level 1', color: 'green', icon: 'fa-hammer', duties: ['Realm infrastructure builds'] },
+            { id: '13', title: 'Town Farmer', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Agricultural Zone', clearance: 'Level 1', color: 'green', icon: 'fa-wheat-awn', duties: ['Crop cultivation & supply'] },
+            { id: '14', title: 'Chief Miner', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Deep Shafts', clearance: 'Level 1', color: 'green', icon: 'fa-pickaxe', duties: ['Resource excavation'] },
+            { id: '15', title: 'Potion Master', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Alchemy Lab', clearance: 'Level 1', color: 'green', icon: 'fa-flask', duties: ['Potion brewing & alchemy supply'] },
+            { id: '16', title: 'Fisherman', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Docks', clearance: 'Level 1', color: 'green', icon: 'fa-fish', duties: ['Aquatic supply & fishing trade'] },
+            { id: '17', title: 'Hunter', department: 'TRADES', tier: 3, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Frontier Outpost', clearance: 'Level 1', color: 'green', icon: 'fa-bow-arrow', duties: ['Mob hunting & material trade'] },
+
+            // --- FENCE, COLLECTOR, CLUB KEEPER AT THE VERY BOTTOM ---
+            { id: '18', title: 'Fence', department: 'UNDERWORLD', tier: 4, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Black Market', clearance: 'Level 1', color: 'red', icon: 'fa-mask', duties: ['Illegal item trading', 'Contraband exchange'] },
+            { id: '19', title: 'Collector', department: 'UNDERWORLD', tier: 4, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Underworld Vault', clearance: 'Level 1', color: 'red', icon: 'fa-sack-dollar', duties: ['Bounty collection', 'Debt recovery'] },
+            { id: '20', title: 'Club Keeper', department: 'UNDERWORLD', tier: 4, assignee: 'Vacant', discord: 'None', status: 'VACANT', location: 'Continental Lounge', clearance: 'Level 1', color: 'red', icon: 'fa-wine-glass', duties: ['Lounge management', 'Underworld intel gathering'] }
+        ];
+
+        let staffRoles = [];
+        let currentEditingId = null;
+
+        function initApp() {
+            const saved = localStorage.getItem('hightable_staff_v4');
+            if (saved) {
+                try { staffRoles = JSON.parse(saved); } catch(e) { staffRoles = [...defaultStaffRoles]; }
+            } else {
+                staffRoles = [...defaultStaffRoles];
+            }
+            renderAll();
+            setInterval(updateClock, 1000);
+            updateClock();
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('hightable_staff_v4', JSON.stringify(staffRoles));
+        }
+
+        function renderAll() {
+            renderMetrics();
+            renderRosterCards();
+            renderHierarchyTree();
+        }
+
+        function renderMetrics() {
+            const total = staffRoles.length;
+            const assigned = staffRoles.filter(r => r.status === 'ASSIGNED').length;
+            const vacant = staffRoles.filter(r => r.status === 'VACANT').length;
+
+            document.getElementById('statTotalRoles').innerText = `Total Roles: ${total}`;
+            document.getElementById('statAssignedCount').innerText = assigned;
+            document.getElementById('statVacantCount').innerText = vacant;
+        }
+
+        function getColorClasses(color, isAssigned) {
+            switch(color) {
+                case 'gold':
+                    return { border: 'border-t-continental-gold', badge: 'text-continental-gold bg-continental-gold/10 border-continental-gold/30', iconBg: 'bg-continental-gold/10 text-continental-gold border-continental-gold/30' };
+                case 'purple':
+                    return { border: 'border-t-continental-purple', badge: 'text-continental-purple bg-continental-purple/10 border-continental-purple/30', iconBg: 'bg-continental-purple/10 text-continental-purple border-continental-purple/30' };
+                case 'blue':
+                    return { border: 'border-t-continental-blue shadow-blue-glow', badge: 'text-continental-blue bg-continental-blue/10 border-continental-blue/30', iconBg: 'bg-continental-blue/10 text-continental-blue border-continental-blue/30' };
+                case 'red':
+                    return { border: 'border-t-continental-crimson', badge: 'text-continental-crimson bg-continental-crimson/10 border-continental-crimson/30', iconBg: 'bg-continental-crimson/10 text-continental-crimson border-continental-crimson/30' };
+                case 'green':
+                default:
+                    return { border: 'border-t-continental-emerald', badge: 'text-continental-emerald bg-continental-emerald/10 border-continental-emerald/30', iconBg: 'bg-continental-emerald/10 text-continental-emerald border-continental-emerald/30' };
+            }
+        }
+
+        function renderRosterCards() {
+            const grid = document.getElementById('staffCardsGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const dept = document.getElementById('departmentFilter').value;
+            const stat = document.getElementById('statusFilter').value;
+
+            const filtered = staffRoles.filter(role => {
+                const matchSearch = role.title.toLowerCase().includes(search) ||
+                                    role.assignee.toLowerCase().includes(search) ||
+                                    role.discord.toLowerCase().includes(search) ||
+                                    role.location.toLowerCase().includes(search);
+                const matchDept = dept === 'ALL' || role.department === dept;
+                const matchStat = stat === 'ALL' || role.status === stat;
+                return matchSearch && matchDept && matchStat;
+            });
+
+            grid.innerHTML = '';
+            const noResults = document.getElementById('noResultsPlaceholder');
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            filtered.forEach(role => {
+                const isAssigned = role.status === 'ASSIGNED';
+                const style = getColorClasses(role.color, isAssigned);
+
+                const card = document.createElement('div');
+                card.className = `glass-panel glass-panel-hover rounded-xl p-5 flex flex-col justify-between border-t-4 ${style.border} cursor-pointer`;
+                card.onclick = () => openRoleModal(role.id);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${isAssigned ? 'text-continental-emerald bg-continental-emerald/10 border-continental-emerald/30' : 'text-amber-400 bg-amber-500/10 border-amber-500/30'}">
+                                ${role.status}
+                            </span>
+                            <span class="text-xs text-slate-400 font-mono"><i class="fa-solid fa-location-dot mr-1"></i>${role.location}</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-9 h-9 rounded-lg ${style.iconBg} flex items-center justify-center shrink-0">
+                                <i class="fa-solid ${role.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-cinzel text-sm font-bold text-slate-100 leading-tight">${role.title}</h4>
+                                <span class="text-[11px] text-slate-400 font-mono">${role.department}</span>
+                            </div>
+                        </div>
+                        <div class="bg-continental-dark/60 p-2.5 rounded-lg border border-continental-border/50 space-y-1 my-3">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Operative:</span>
+                                <strong class="${isAssigned ? 'text-continental-gold' : 'text-amber-400 italic'}">${role.assignee}</strong>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Discord:</span>
+                                <span class="text-slate-300 font-mono text-[11px]">${role.discord}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-continental-border/50 flex items-center justify-between text-[11px] text-slate-400">
+                        <span>${role.clearance}</span>
+                        <span class="text-continental-gold hover:underline"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderHierarchyTree() {
+            const t1 = document.getElementById('hierarchyTier1');
+            const t2 = document.getElementById('hierarchyTier2');
+            const t3 = document.getElementById('hierarchyTier3');
+            const t4 = document.getElementById('hierarchyTier4');
+
+            t1.innerHTML = ''; t2.innerHTML = ''; t3.innerHTML = ''; t4.innerHTML = '';
+
+            staffRoles.forEach(role => {
+                const node = document.createElement('div');
+                const isAssigned = role.status === 'ASSIGNED';
+                const style = getColorClasses(role.color, isAssigned);
+
+                node.className = `glass-panel rounded-xl p-3.5 w-60 border ${isAssigned ? 'border-continental-gold/40' : 'border-continental-border'} flex flex-col justify-between cursor-pointer hover:border-continental-gold`;
+                node.onclick = () => openRoleModal(role.id);
+
+                node.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${isAssigned ? 'bg-continental-emerald/20 text-continental-emerald' : 'bg-amber-500/20 text-amber-400'}">${role.status}</span>
+                        <span class="text-[10px] text-slate-400 font-mono">${role.clearance.split(' ')[0]}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-8 h-8 rounded ${style.iconBg} flex items-center justify-center shrink-0">
+                            <i class="fa-solid ${role.icon} text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-cinzel text-xs font-bold text-slate-100 leading-tight">${role.title}</div>
+                            <div class="text-[10px] ${isAssigned ? 'text-continental-gold font-semibold' : 'text-amber-400 italic'}">${role.assignee}</div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-mono truncate"><i class="fa-solid fa-discord mr-1"></i>${role.discord}</div>
+                `;
+
+                if (role.tier === 1) t1.appendChild(node);
+                else if (role.tier === 2) t2.appendChild(node);
+                else if (role.tier === 3) t3.appendChild(node);
+                else if (role.tier === 4) t4.appendChild(node);
+            });
+        }
+
+        function switchTab(tabName) {
+            const btnRoster = document.getElementById('tabBtnRoster');
+            const btnHierarchy = document.getElementById('tabBtnHierarchy');
+            const contentRoster = document.getElementById('tabContentRoster');
+            const contentHierarchy = document.getElementById('tabContentHierarchy');
+            const searchControls = document.getElementById('rosterSearchControls');
+
+            if (tabName === 'roster') {
+                btnRoster.className = "px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-lg bg-continental-gold text-continental-black shadow-gold-glow transition-all flex items-center gap-2 whitespace-nowrap";
+                btnHierarchy.className = "px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 border border-continental-border transition-all flex items-center gap-2 whitespace-nowrap";
+                contentRoster.classList.remove('hidden');
+                contentHierarchy.classList.add('hidden');
+                searchControls.classList.remove('hidden');
+            } else {
+                btnHierarchy.className = "px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-lg bg-continental-gold text-continental-black shadow-gold-glow transition-all flex items-center gap-2 whitespace-nowrap";
+                btnRoster.className = "px-4 py-2 text-xs font-bold tracking-wider uppercase rounded-lg bg-continental-card hover:bg-slate-800 text-slate-300 border border-continental-border transition-all flex items-center gap-2 whitespace-nowrap";
+                contentHierarchy.classList.remove('hidden');
+                contentRoster.classList.add('hidden');
+                searchControls.classList.add('hidden');
+            }
+        }
+
+        function filterStaff() { renderRosterCards(); }
+
+        function openRoleModal(id) {
+            currentEditingId = id;
+            const role = staffRoles.find(r => r.id === id);
+            if (!role) return;
+
+            document.getElementById('modalRoleTitle').innerText = role.title;
+            document.getElementById('modalDepartmentBadge').innerText = role.department;
+            document.getElementById('modalRoleIcon').className = `fa-solid ${role.icon} text-lg`;
+            document.getElementById('modalInputAssignee').value = role.assignee;
+            document.getElementById('modalInputDiscord').value = role.discord;
+            document.getElementById('modalLocationText').innerText = role.location;
+            document.getElementById('modalClearanceText').innerText = role.clearance;
+
+            const statusBadge = document.getElementById('modalStatusBadge');
+            const toggleBtn = document.getElementById('modalToggleVacantBtn');
+
+            if (role.status === 'ASSIGNED') {
+                statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-continental-emerald/20 text-continental-emerald border border-continental-emerald/30';
+                statusBadge.innerText = 'Assigned';
+                toggleBtn.innerText = 'Mark as Vacant';
+                toggleBtn.className = 'px-3 py-1.5 rounded-lg bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/50 text-xs font-semibold';
+            } else {
+                statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                statusBadge.innerText = 'Vacant';
+                toggleBtn.innerText = 'Mark as Assigned';
+                toggleBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-950/50 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/50 text-xs font-semibold';
+            }
+
+            const dutiesList = document.getElementById('modalDutiesList');
+            dutiesList.innerHTML = '';
+            role.duties.forEach(duty => {
+                const li = document.createElement('li');
+                li.innerText = duty;
+                dutiesList.appendChild(li);
+            });
+
+            document.getElementById('roleModal').classList.remove('hidden');
+        }
+
+        function closeRoleModal() {
+            document.getElementById('roleModal').classList.add('hidden');
+            currentEditingId = null;
+        }
+
+        function toggleRoleVacant() {
+            const role = staffRoles.find(r => r.id === currentEditingId);
+            if (!role) return;
+            if (role.status === 'ASSIGNED') {
+                role.status = 'VACANT';
+                role.assignee = 'Vacant';
+                role.discord = 'None';
+                document.getElementById('modalInputAssignee').value = 'Vacant';
+                document.getElementById('modalInputDiscord').value = 'None';
+            } else {
+                role.status = 'ASSIGNED';
+                role.assignee = 'Operative';
+                role.discord = '@operative';
+                document.getElementById('modalInputAssignee').value = 'Operative';
+                document.getElementById('modalInputDiscord').value = '@operative';
+            }
+            openRoleModal(role.id);
+        }
+
+        function saveRoleChanges() {
+            const role = staffRoles.find(r => r.id === currentEditingId);
+            if (!role) return;
+
+            const newAssignee = document.getElementById('modalInputAssignee').value.trim();
+            const newDiscord = document.getElementById('modalInputDiscord').value.trim();
+
+            role.assignee = newAssignee || 'Vacant';
+            role.discord = newDiscord || 'None';
+            role.status = (role.assignee.toLowerCase() === 'vacant' || !role.assignee) ? 'VACANT' : 'ASSIGNED';
+
+            saveToLocalStorage();
+            renderAll();
+            closeRoleModal();
+            showToast('Role updated successfully!', 'success');
+        }
+
+        function openApplyModal() {
+            const select = document.getElementById('appRoleSelect');
+            select.innerHTML = '';
+            staffRoles.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.title;
+                opt.innerText = `${r.title} (${r.status})`;
+                select.appendChild(opt);
+            });
+            document.getElementById('applyModal').classList.remove('hidden');
+        }
+
+        function closeApplyModal() { document.getElementById('applyModal').classList.add('hidden'); }
+        function openRulesModal() { document.getElementById('rulesModal').classList.remove('hidden'); }
+        function closeRulesModal() { document.getElementById('rulesModal').classList.add('hidden'); }
+
+        function handleApplySubmit(e) {
+            e.preventDefault();
+            const ign = document.getElementById('appIGN').value;
+            const discord = document.getElementById('appDiscord').value;
+            const role = document.getElementById('appRoleSelect').value;
+            const tz = document.getElementById('appTimezone').value || 'Not specified';
+            const exp = document.getElementById('appExperience').value || 'None provided';
+
+            const formattedMarkdown = `\`\`\`markdown\n# 🛡️ HIGH TABLE APPLICATION: ${role.toUpperCase()}\n- IGN: ${ign}\n- Discord: ${discord}\n- Timezone: ${tz}\n\n### Background & Experience\n${exp}\n\`\`\``;
+
+            navigator.clipboard.writeText(formattedMarkdown).then(() => {
+                showToast('Application copied to clipboard!', 'success');
+                closeApplyModal();
+            }).catch(() => {
+                showToast('Failed to copy. Please check clipboard permissions.', 'error');
+            });
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const borderColor = type === 'success' ? 'border-continental-emerald text-continental-emerald' : 'border-continental-gold text-continental-gold';
+            toast.className = `glass-panel px-4 py-3 rounded-xl border ${borderColor} text-xs font-mono shadow-xl flex items-center gap-2 transform translate-y-2 opacity-0 transition-all duration-300`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(staffRoles, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "hightable_staff_backup.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast('Staff database exported successfully!', 'success');
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (Array.isArray(parsed)) {
+                        staffRoles = parsed;
+                        saveToLocalStorage();
+                        renderAll();
+                        showToast('Staff database imported successfully!', 'success');
+                    } else {
+                        showToast('Invalid JSON structure.', 'error');
+                    }
+                } catch(err) {
+                    showToast('Error reading JSON file.', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function copyExcommunicadoBroadcast() {
+            const text = `\`\`\`markdown\n# 🚨 HIGH TABLE ANNOUNCEMENT: EXCOMMUNICADO 🚨\n\nTarget: [BabaYaga]\nStatus: EXCOMMUNICADO\nGrievance: Violating Continental Sanctuary Laws / Major Rule Infraction.\nEffective Period: Active for 1 IRL Day.\nRules of Engagement: Hostile on Sight. Any assassin may attack outside designated safe zones.\nBounty Reward: 40 Coins / Emeralds (Submit kill screenshot to Admin).\n\`\`\``;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Excommunicado broadcast copied to clipboard!', 'success');
+            });
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('systemClock').innerText = now.toTimeString().split(' ')[0];
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
